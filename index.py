@@ -37,8 +37,6 @@ class StagedCdkProject:
         self.workdir = self.path + "/" + self.name
         self.project_stages = [{}]
 
-        self.build()
-
     def build(self):
         self.setup()
 
@@ -172,7 +170,8 @@ class StagedCdkProject:
 
 
 def main(name, path, config):
-    StagedCdkProject(name, path, config)
+    cdk_project = StagedCdkProject(name, path, config)
+    cdk_project.build()
 
 
 if __name__ == "__main__":
