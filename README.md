@@ -10,6 +10,7 @@ Requires CDK and npm.
 
 ## Usage
 ```shell
+$:python cdk-stages -h
 usage: cdk-stages [-h] -p PATH [-n NAME] [-c CONFIG]
 
 optional arguments:

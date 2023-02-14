@@ -1,0 +1,2 @@
+[console_scripts]
+cdk-stages = __main__
