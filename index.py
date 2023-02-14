@@ -57,34 +57,64 @@ class StagedCdkProject:
         shutil.copytree("templates/src-dir-template", self.workdir+"/src")
 
     def generate_stages(self):
-        print("generateStages")
+        print("Building stages based on the config:  ")
+        print(json.dumps(self.config, indent=2))
         regions = []
         for item in self.project_stages:
             for ou in item:
                 for account in item[ou]:
                     for region in item[ou][account]:
-                        print(region)
                         regions+=region
                         self.create_stage(ou, account, region)
 
     def create_stage(self, ou, account, region):
+        # Create the directory tree
+        print("Generating files for stage "+ou+"/"+account+"/"+region+"...")
         os.makedirs(self.workdir + "/src/stages/" + ou + "/" + account + "/" + region)
-        self.create_ou(ou)
-        self.create_account(ou, account)
 
-    def create_ou(self, ou):
-        with open("templates/ou.template") as t:
-            template = string.Template(t.read())
-        ou_index = template.substitute(ou=ou, ou_camel_case=camel_case(ou))
-        with open(self.workdir+"/src/stages/"+ou+"/index.ts", "w") as output:
-            output.write(ou_index)
+        # Create OU index
+        if not os.path.isfile(self.workdir+"/src/stages/"+ou+"/index.ts"):
+            print("Creating index file for ou... " + ou)
+            self.create_index("templates/ou.template",
+                              self.workdir+"/src/stages/"+ou,
+                              {
+                                  "ou": ou,
+                                  "class_name": camel_case(ou)
+                              }
+            )
+            print("Done.")
 
-    def create_account(self, ou, account):
-        with open("templates/account.template") as t:
+        # Create Account index
+        if not os.path.isfile(self.workdir+"/src/stages/"+ou+"/"+account+"/index.ts"):
+            print("Creating index file for account " + account + "...")
+            self.create_index("templates/account.template",
+                              self.workdir + "/src/stages/" + ou + "/" + account,
+                              {
+                                  "parent_class": camel_case(ou),
+                                  "account": account,
+                                  "class_name": camel_case(ou) + camel_case(account)
+                              }
+            )
+            print("Done")
+
+        #Create Region index
+        if not os.path.isfile(self.workdir+"/src/stages/"+ou+"/"+account+"/"+region+"/index.ts"):
+            print("Creating index file for region " + region + " in account " + account + "...")
+            self.create_index("templates/region.template",
+                              self.workdir + "/src/stages/" + ou + "/" + account + "/" + region,
+                              {
+                                  "parent_class": camel_case(ou) + camel_case(account),
+                                  "region": region,
+                                  "class_name": camel_case(ou) + camel_case(account) + camel_case(region)
+                              })
+            print("Done")
+
+    def create_index(self, template_path, target_path, args):
+        with open(template_path) as t:
             template = string.Template(t.read())
-        account_index = template.substitute(ou=camel_case(ou), account=account, class_name=camel_case(ou) + camel_case(account))
-        with open(self.workdir + "/src/stages/" + ou + "/" + account + "/index.ts", "w") as output:
-            output.write(account_index)
+        index = template.substitute(**args)
+        with open(target_path+"/index.ts", "w") as output:
+            output.write(index)
 
     def run_install(self):
         print("run install")

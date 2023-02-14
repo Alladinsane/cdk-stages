@@ -2,12 +2,12 @@ import { Tags } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { Organization, OrganizationProps } from '../organization';
 
-export interface ${ou_camel_case}Props extends OrganizationProps {
+export interface ${class_name}Props extends OrganizationProps {
     readonly dependencies?: string[];
 }
 
-export abstract class ${ou_camel_case} extends Organization {
-    constructor(scope: Construct, id: string, props: ${ou_camel_case}Props) {
+export abstract class ${class_name} extends Organization {
+    constructor(scope: Construct, id: string, props: ${class_name}Props) {
         super(scope, id, props);
 
         Tags.of(this).add('ou', '${ou}')
