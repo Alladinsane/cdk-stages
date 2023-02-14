@@ -57,8 +57,9 @@ class StagedCdkProject:
         shutil.copytree("templates/src-dir-template", self.workdir+"/src")
 
     def generate_stages(self):
-        print("Building stages based on the config:  ")
+        print("Building stages based on the config from " + self.config + ":")
         print(json.dumps(self.config, indent=2))
+        print(" ")
         regions = []
         for item in self.project_stages:
             for ou in item:
@@ -83,6 +84,7 @@ class StagedCdkProject:
                               }
             )
             print("Done.")
+            print(" ")
 
         # Create Account index
         if not os.path.isfile(self.workdir+"/src/stages/"+ou+"/"+account+"/index.ts"):
@@ -96,6 +98,7 @@ class StagedCdkProject:
                               }
             )
             print("Done")
+            print(" ")
 
         #Create Region index
         if not os.path.isfile(self.workdir+"/src/stages/"+ou+"/"+account+"/"+region+"/index.ts"):
@@ -108,6 +111,7 @@ class StagedCdkProject:
                                   "class_name": camel_case(ou) + camel_case(account) + camel_case(region)
                               })
             print("Done")
+            print(" ")
 
     def create_index(self, template_path, target_path, args):
         with open(template_path) as t:
