@@ -1,0 +1,10 @@
+$(printf '%s\n' "${imports[@]}")
+import { RegionConfigBase } from "./region-base"
+
+
+const RegionConfigs: { [region: string]: RegionConfigBase } = {
+$(printf '%s\n' "${configs[@]}" | awk '{ print "\t\t" $0 }')
+    // ..add additional region configs
+}
+
+export { RegionConfigs }

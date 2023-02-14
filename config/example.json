@@ -1,0 +1,14 @@
+[{
+    "example": {
+        "stage": [
+            "us-east-1"
+        ],
+        "dev": [
+            "us-east-1",
+            "us-east-2"
+        ],
+        "prod": [
+            "us-east-1"
+        ]
+    }
+}]

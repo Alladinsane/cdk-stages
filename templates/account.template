@@ -1,0 +1,26 @@
+import { StageProps, Tags } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { ${ou} } from '..';
+import { Environment } from '../../../constructs/environment';
+
+export interface ${class_name}Props extends StageProps {
+    // Props 
+}
+
+export abstract class ${class_name} extends ${ou} {
+    // Static properties
+    public static readonly AccountId: string = '123456789'; // Replace with valid Account Id
+
+    // Input properties
+
+    constructor(scope: Construct, id: string, props: ${class_name}Props) {
+        super(scope, id, {
+            ...props, env: { ...props.env, account: ${class_name}.AccountId },
+            accountName: '${account}'
+        }); 
+
+        Tags.of(this).add('account', '${account}')
+
+        // Define Environments here
+    }
+}

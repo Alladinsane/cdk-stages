@@ -1,0 +1,16 @@
+import { StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { ${ou^}${account^} } from '..';
+
+export interface ${ou^}${account^}${regionname}Props extends StackProps {
+    readonly dependencies?: string[];
+}
+
+export class ${ou^}${account^}${regionname} extends ${ou^}${account^} {
+
+    constructor(scope: Construct, id: string, props: ${ou^}${account^}${regionname}Props = {}) {
+        super(scope, id, {
+            ...props, env: { region: '${region}' }
+        });
+    }
+}
