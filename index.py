@@ -1,17 +1,22 @@
+import argparse
 import json
 import os
 import shutil
 import string
 import subprocess
+import sys
 from re import sub
 
+import config
 
-def create_file(template_path, target_path, args):
-    with open(template_path) as t:
+
+def create_file(template_path, target_path, params):
+    with open(os.path.join(sys.path[0], template_path)) as t:
         template = string.Template(t.read())
-    index = template.substitute(**args)
+    index = template.substitute(**params)
     with open(target_path, "w") as output:
         output.write(index)
+
 
 def camel_case(string):
     string = sub(r"(_|-)+", " ", string).title().replace(" ", "")
@@ -19,10 +24,14 @@ def camel_case(string):
 
 
 class StagedCdkProject:
-    def __init__(self, name, path, config='config/example.json'):
+    def __init__(self, name, path, configuration=None):
         self.name = name
         self.path = path
-        self.config = config
+        if not configuration:
+            self.config = os.path.join(sys.path[0], "config/example.json")
+        else:
+            self.config = configuration
+
         self.regions = []
 
         self.project_name = name
@@ -58,18 +67,18 @@ class StagedCdkProject:
         cdk_project.wait()
 
     def update_entry_point(self):
-        with open(self.workdir+"/package.json", "r") as f:
+        with open(self.workdir + "/package.json", "r") as f:
             project = json.load(f)
             self.project_name = project['name']
-        self.entrypoint = self.workdir+"/bin/"+self.project_name + '.ts'
+        self.entrypoint = self.workdir + "/bin/" + self.project_name + '.ts'
         self.camel_case_name = camel_case(self.project_name)
         print(self.camel_case_name)
         shutil.copy('templates/cdk.ts.template', self.entrypoint)
 
     def setup_src_directory(self):
         print("Setup src")
-        shutil.rmtree(self.workdir+"/lib")
-        shutil.copytree("templates/src-dir-template", self.workdir+"/src")
+        shutil.rmtree(self.workdir + "/lib")
+        shutil.copytree("templates/src-dir-template", self.workdir + "/src")
 
     def generate_stages(self):
         print("Building stages based on the config from " + self.config + ":")
@@ -84,46 +93,46 @@ class StagedCdkProject:
 
     def create_stage(self, ou, account, region):
         # Create the directory tree
-        print("Generating files for stage "+ou+"/"+account+"/"+region+"...")
+        print("Generating files for stage " + ou + "/" + account + "/" + region + "...")
         os.makedirs(self.workdir + "/src/stages/" + ou + "/" + account + "/" + region)
 
         # Create OU index
-        if not os.path.isfile(self.workdir+"/src/stages/"+ou+"/index.ts"):
+        if not os.path.isfile(self.workdir + "/src/stages/" + ou + "/index.ts"):
             print("Creating index file for ou... " + ou)
             create_file("templates/ou.template",
-                              self.workdir+"/src/stages/"+ou+"index.ts",
-                              {
-                                  "ou": ou,
-                                  "class_name": camel_case(ou)
-                              }
-            )
+                        self.workdir + "/src/stages/" + ou + "/index.ts",
+                        {
+                            "ou": ou,
+                            "class_name": camel_case(ou)
+                        }
+                        )
             print("Done.")
             print(" ")
 
         # Create Account index
-        if not os.path.isfile(self.workdir+"/src/stages/"+ou+"/"+account+"/index.ts"):
+        if not os.path.isfile(self.workdir + "/src/stages/" + ou + "/" + account + "/index.ts"):
             print("Creating index file for account " + account + "...")
             create_file("templates/account.template",
-                              self.workdir + "/src/stages/" + ou + "/" + account + "/index.ts",
-                              {
-                                  "parent_class": camel_case(ou),
-                                  "account": account,
-                                  "class_name": camel_case(ou) + camel_case(account)
-                              }
-            )
+                        self.workdir + "/src/stages/" + ou + "/" + account + "/index.ts",
+                        {
+                            "parent_class": camel_case(ou),
+                            "account": account,
+                            "class_name": camel_case(ou) + camel_case(account)
+                        }
+                        )
             print("Done")
             print(" ")
 
-        #Create Region index
-        if not os.path.isfile(self.workdir+"/src/stages/"+ou+"/"+account+"/"+region+"/index.ts"):
+        # Create Region index
+        if not os.path.isfile(self.workdir + "/src/stages/" + ou + "/" + account + "/" + region + "/index.ts"):
             print("Creating index file for region " + region + " in account " + account + "...")
             create_file("templates/region.template",
-                              self.workdir + "/src/stages/" + ou + "/" + account + "/" + region + "/index.ts",
-                              {
-                                  "parent_class": camel_case(ou) + camel_case(account),
-                                  "region": region,
-                                  "class_name": camel_case(ou) + camel_case(account) + camel_case(region)
-                              })
+                        self.workdir + "/src/stages/" + ou + "/" + account + "/" + region + "/index.ts",
+                        {
+                            "parent_class": camel_case(ou) + camel_case(account),
+                            "region": region,
+                            "class_name": camel_case(ou) + camel_case(account) + camel_case(region)
+                        })
             print("Done")
             print(" ")
 
@@ -131,15 +140,15 @@ class StagedCdkProject:
         imports = []
         configs = []
         for region in self.regions:
-            if not os.path.isfile(self.workdir+"/src/configuration/regions/"+region+".ts"):
+            if not os.path.isfile(self.workdir + "/src/configuration/regions/" + region + ".ts"):
                 print("Creating configuration file for region " + region + "...")
                 create_file("templates/region-config.template",
-                            self.workdir+"/src/configuration/regions/"+region+".ts",
+                            self.workdir + "/src/configuration/regions/" + region + ".ts",
                             {
                                 "region_name": camel_case(region)
                             })
-                imports.append("import { config as " + camel_case(region) + "Config } from ./" + region + "; \n")
-                configs.append("['"+region+"']: " + camel_case(region)+"Config, \n")
+                imports.append("import { config as " + camel_case(region) + "Config } from './" + region + "';")
+                configs.append("['" + region + "']: " + camel_case(region) + "Config,")
                 print("Done")
                 print(" ")
 
@@ -150,8 +159,8 @@ class StagedCdkProject:
         create_file("templates/region-index.template",
                     self.workdir + "/src/configuration/regions/index.ts",
                     {
-                        "imports": imports,
-                        "configs": configs
+                        "imports": '\n'.join(imports),
+                        "configs": '\n\t'.join(configs)
                     })
         print("Done")
         print(" ")
@@ -162,12 +171,17 @@ class StagedCdkProject:
         install.wait()
 
 
-def main():
-    path = "/home/todd/clients/rbn/cdk-workspace/test-projects"
-    name = "AwesomeByPython"
-
-    project = StagedCdkProject(name, path)
+def main(name, path, config):
+    StagedCdkProject(name, path, config)
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-p', '--path',
+                        help='Full path to directory to create project in.',
+                        required=True)
+    parser.add_argument('-n', '--name', help='Name of project to create.', default='AwesomeProject')
+    parser.add_argument('-c', '--config', help='(Optional)Full path to config file that defines stages to create.', default=None)
+    args = parser.parse_args()
+
+    main(args.name, args.path, args.config)
