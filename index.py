@@ -7,9 +7,6 @@ import subprocess
 import sys
 from re import sub
 
-import config
-
-
 def create_file(template_path, target_path, params):
     with open(os.path.join(sys.path[0], template_path)) as t:
         template = string.Template(t.read())
@@ -40,6 +37,9 @@ class StagedCdkProject:
         self.workdir = self.path + "/" + self.name
         self.project_stages = [{}]
 
+        self.build()
+
+    def build(self):
         self.setup()
 
         self.create_base_cdk_project()
