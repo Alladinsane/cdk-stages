@@ -6,7 +6,9 @@ This follows a pattern suitable for managing multi-account deployments for users
 It utilizes stack inheritance to limit code duplication and centralize configuration of each stage.
 
 ## Requirements
-Requires CDK and npm.
+- CDK
+- npm
+- python 3
 
 ## Usage
 ```shell
