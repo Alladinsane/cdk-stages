@@ -6,11 +6,24 @@ import subprocess
 from re import sub
 
 
+def create_file(template_path, target_path, args):
+    with open(template_path) as t:
+        template = string.Template(t.read())
+    index = template.substitute(**args)
+    with open(target_path, "w") as output:
+        output.write(index)
+
+def camel_case(string):
+    string = sub(r"(_|-)+", " ", string).title().replace(" ", "")
+    return ''.join(string)
+
+
 class StagedCdkProject:
     def __init__(self, name, path, config='config/example.json'):
         self.name = name
         self.path = path
         self.config = config
+        self.regions = []
 
         self.project_name = name
         self.camel_case_name = ""
@@ -27,6 +40,8 @@ class StagedCdkProject:
         self.setup_src_directory()
 
         self.generate_stages()
+
+        self.generate_region_configs()
 
         self.run_install()
 
@@ -58,14 +73,13 @@ class StagedCdkProject:
 
     def generate_stages(self):
         print("Building stages based on the config from " + self.config + ":")
-        print(json.dumps(self.config, indent=2))
+        print(json.dumps(self.project_stages, indent=2))
         print(" ")
-        regions = []
         for item in self.project_stages:
             for ou in item:
                 for account in item[ou]:
                     for region in item[ou][account]:
-                        regions+=region
+                        self.regions.append(region)
                         self.create_stage(ou, account, region)
 
     def create_stage(self, ou, account, region):
@@ -76,8 +90,8 @@ class StagedCdkProject:
         # Create OU index
         if not os.path.isfile(self.workdir+"/src/stages/"+ou+"/index.ts"):
             print("Creating index file for ou... " + ou)
-            self.create_index("templates/ou.template",
-                              self.workdir+"/src/stages/"+ou,
+            create_file("templates/ou.template",
+                              self.workdir+"/src/stages/"+ou+"index.ts",
                               {
                                   "ou": ou,
                                   "class_name": camel_case(ou)
@@ -89,8 +103,8 @@ class StagedCdkProject:
         # Create Account index
         if not os.path.isfile(self.workdir+"/src/stages/"+ou+"/"+account+"/index.ts"):
             print("Creating index file for account " + account + "...")
-            self.create_index("templates/account.template",
-                              self.workdir + "/src/stages/" + ou + "/" + account,
+            create_file("templates/account.template",
+                              self.workdir + "/src/stages/" + ou + "/" + account + "/index.ts",
                               {
                                   "parent_class": camel_case(ou),
                                   "account": account,
@@ -103,8 +117,8 @@ class StagedCdkProject:
         #Create Region index
         if not os.path.isfile(self.workdir+"/src/stages/"+ou+"/"+account+"/"+region+"/index.ts"):
             print("Creating index file for region " + region + " in account " + account + "...")
-            self.create_index("templates/region.template",
-                              self.workdir + "/src/stages/" + ou + "/" + account + "/" + region,
+            create_file("templates/region.template",
+                              self.workdir + "/src/stages/" + ou + "/" + account + "/" + region + "/index.ts",
                               {
                                   "parent_class": camel_case(ou) + camel_case(account),
                                   "region": region,
@@ -113,21 +127,39 @@ class StagedCdkProject:
             print("Done")
             print(" ")
 
-    def create_index(self, template_path, target_path, args):
-        with open(template_path) as t:
-            template = string.Template(t.read())
-        index = template.substitute(**args)
-        with open(target_path+"/index.ts", "w") as output:
-            output.write(index)
+    def generate_region_configs(self):
+        imports = []
+        configs = []
+        for region in self.regions:
+            if not os.path.isfile(self.workdir+"/src/configuration/regions/"+region+".ts"):
+                print("Creating configuration file for region " + region + "...")
+                create_file("templates/region-config.template",
+                            self.workdir+"/src/configuration/regions/"+region+".ts",
+                            {
+                                "region_name": camel_case(region)
+                            })
+                imports.append("import { config as " + camel_case(region) + "Config } from ./" + region + "; \n")
+                configs.append("['"+region+"']: " + camel_case(region)+"Config, \n")
+                print("Done")
+                print(" ")
+
+        self.create_region_config_index(imports, configs)
+
+    def create_region_config_index(self, imports, configs):
+        print("Creating index file for region configurations...")
+        create_file("templates/region-index.template",
+                    self.workdir + "/src/configuration/regions/index.ts",
+                    {
+                        "imports": imports,
+                        "configs": configs
+                    })
+        print("Done")
+        print(" ")
 
     def run_install(self):
         print("run install")
         install = subprocess.Popen(["npm", "install"], cwd=self.workdir)
         install.wait()
-
-def camel_case(string):
-    string = sub(r"(_|-)+", " ", string).title().replace(" ", "")
-    return ''.join(string)
 
 
 def main():

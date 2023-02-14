@@ -1,9 +1,9 @@
-$(printf '%s\n' "${imports[@]}")
+${imports}
 import { RegionConfigBase } from "./region-base"
 
 
 const RegionConfigs: { [region: string]: RegionConfigBase } = {
-$(printf '%s\n' "${configs[@]}" | awk '{ print "\t\t" $0 }')
+    ${configs}
     // ..add additional region configs
 }
 

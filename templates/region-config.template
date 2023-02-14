@@ -2,12 +2,12 @@ import { RegionConfigBase } from "./region-base"
 
 // Define values for configurations required for this region
 
-export class ${regionname}Config extends RegionConfigBase {
+export class ${region_name}Config extends RegionConfigBase {
     // public readonly resolverRules?: string[] = ['rslvr-example'];
     // public readonly transitGatewayDefaultRouteTableId?: string = 'tgw-rtb-123456abcdef';
     // public readonly transitGatewayId?: string = 'tgw-123456abcdef';
     // public readonly transitGatewayPeeringAttachments?: { [region: string]: string } = {'region-to-connect': 'tgw-attach-123456abcdef'}
 }
 
-const config = new ${regionname}Config();
+const config = new ${region_name}Config();
 export { config }
