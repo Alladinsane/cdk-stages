@@ -16,11 +16,10 @@ $:python -m cdk-stages -h
 usage: cdk-stages [-h] -p PATH [-n NAME] [-c CONFIG]
 
 optional arguments:
-  -h, --help            show this help message and exit
-  -p PATH, --path PATH  Full path to directory to create project in.
-  -n NAME, --name NAME  Name of project to create.
-  -c CONFIG, --config CONFIG
-                        (Optional)Full path to config file that defines stages to create.
+  -h,        --help          show this help message and exit
+  -p PATH,   --path   PATH   Full path to directory to create project in.
+  -n NAME,   --name   NAME   Name of project to create.
+  -c CONFIG, --config CONFIG (Optional)Full path to config file that defines stages to create.
 ```
 
 ## Project Structure
@@ -67,3 +66,43 @@ in your config. As shown, each directory contains a detailed README.
 For detailed explanations of why we use this layout, and how it allows us to use stack inheritance to limit code 
 duplication, see the READMEs in each directory. The best jumping off point is the 
 [README on stages](./templates/src-dir-template/stages/README.md).
+
+## Project Configuration
+The project stages and empty region configurations are generated based on the stages defined in the configuration file. 
+The configuration file should be a json list of objects defining all OUs, Accounts, and Regions in the project in the 
+format:
+```json
+[
+  {
+    "OU": {
+        "Account": [
+            "aws-region-code",
+            ...
+          ],
+        ...
+        ]
+    }
+  }
+]
+```
+
+If no config is supplied, an example OU, three example accounts, and 4 sample stages are created for you using the 
+default configuration:
+```json
+[
+    {
+        "example": {
+            "stage": [
+                "us-east-1"
+            ],
+            "dev": [
+                "us-east-1",
+                "us-east-2"
+            ],
+            "prod": [
+                "us-east-1"
+            ]
+        }
+  }
+]
+```
