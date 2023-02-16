@@ -1,9 +1,8 @@
 import argparse
 import subprocess
 
-from src.cdk_project import CdkProject
-from src.region_configuration import RegionConfiguration
-
+import lib.cdk_project
+import lib.region_configuration
 
 def run_install(workdir):
     print("run install")
@@ -13,10 +12,10 @@ def run_install(workdir):
 
 def main(name, path, config):
     workdir = path + "/" + name
-    cdk_project = CdkProject(name=name, workdir=workdir, configuration=config)
-    cdk_project.build()
+    project = lib.cdk_project.CdkProject(name=name, workdir=workdir, configuration=config)
+    project.build()
 
-    RegionConfiguration(workdir=workdir, regions=cdk_project.regions)
+    lib.region_configuration.RegionConfiguration(workdir=workdir, regions=project.regions)
 
     run_install(workdir)
 

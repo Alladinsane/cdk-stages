@@ -4,16 +4,16 @@ import shutil
 import subprocess
 import sys
 
-from utils import camel_case
-from stage import Stage
-
+from .utils import camel_case
+from .utils import create_file
+from .stage import Stage
 
 class CdkProject:
     def __init__(self, name, workdir, configuration=None):
         self.workdir = workdir
         self.stages = []
         if not configuration:
-            self.config = os.path.join(sys.path[0], "config/example.json")
+            self.config = os.path.join(sys.path[0], "lib/config/example.json")
         else:
             self.config = configuration
 
@@ -37,16 +37,18 @@ class CdkProject:
         cdk_project.wait()
 
     def update_entry_point(self):
+        template = os.path.join(sys.path[0], "lib/templates/cdk.ts.template")
         with open(self.workdir + "/package.json", "r") as f:
             project = json.load(f)
             self.project_name = project['name']
         self.entrypoint = self.workdir + "/bin/" + self.project_name + '.ts'
-        shutil.copy('templates/cdk.ts.template', self.entrypoint)
+        shutil.copy(template, self.entrypoint)
 
     def setup_src_directory(self):
+        template = os.path.join(sys.path[0], "lib/templates/src-dir-template")
         print("Setup src")
         shutil.rmtree(self.workdir + "/lib")
-        shutil.copytree("templates/src-dir-template", self.workdir + "/src")
+        shutil.copytree(template, self.workdir + "/src")
 
     def generate_stages(self):
         print("Building stages based on the config from " + self.config + ":")

@@ -1,6 +1,6 @@
 import os
 
-from utils import create_file, camel_case
+from .utils import create_file, camel_case
 
 
 class Stage:
