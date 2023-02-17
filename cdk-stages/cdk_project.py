@@ -4,54 +4,59 @@ import shutil
 import subprocess
 import sys
 
-from .utils import camel_case
-from .utils import create_file
 from .stage import Stage
+from .utils import camel_case, create_file
+
 
 class CdkProject:
     def __init__(self, name, workdir, configuration=None):
         self.workdir = workdir
         self.stages = []
+
         if not configuration:
-            self.config = os.path.join(sys.path[0], "lib/config/example.json")
-        else:
-            self.config = configuration
+            print(os.path.abspath(__file__))
+            configuration = os.path.join(os.path.abspath(os.path.dirname(__file__)), "config/example.json")
+            print("configuration=" + configuration)
+
+        with open(configuration, "r") as f:
+            self.project_stages = json.load(f)
 
         self.regions = []
 
         self.project_name = name
         self.camel_case_name = camel_case(self.project_name)
         self.entrypoint = "cdk.ts"
-        self.project_stages = [{}]
 
     def setup(self):
         try:
             os.mkdir(self.workdir)
         except OSError as error:
             print(error)
-        with open(self.config, "r") as f:
-            self.project_stages = json.load(f)
 
     def create_base_cdk_project(self):
         cdk_project = subprocess.Popen(["cdk", "init", "app", "--language=typescript"], cwd=self.workdir)
         cdk_project.wait()
 
     def update_entry_point(self):
-        template = os.path.join(sys.path[0], "lib/templates/cdk.ts.template")
+        template = os.path.join(os.path.abspath(os.path.dirname(__file__)), "templates/cdk-ts.template")
         with open(self.workdir + "/package.json", "r") as f:
             project = json.load(f)
             self.project_name = project['name']
         self.entrypoint = self.workdir + "/bin/" + self.project_name + '.ts'
         shutil.copy(template, self.entrypoint)
 
+        create_file("templates/cdk-ts.template",
+                    self.workdir + "/" + self.project_name
+        )
+
     def setup_src_directory(self):
-        template = os.path.join(sys.path[0], "lib/templates/src-dir-template")
+        template = os.path.join(os.path.abspath(os.path.dirname(__file__)), "templates/src-dir-template")
         print("Setup src")
         shutil.rmtree(self.workdir + "/lib")
         shutil.copytree(template, self.workdir + "/src")
 
     def generate_stages(self):
-        print("Building stages based on the config from " + self.config + ":")
+        print("Building stages:")
         print(json.dumps(self.project_stages, indent=2))
         print(" ")
         for item in self.project_stages:
