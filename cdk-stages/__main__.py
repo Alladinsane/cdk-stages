@@ -2,8 +2,8 @@ import argparse
 import os
 import subprocess
 
-from . import cdk_project
-from . import region_configuration
+import cdk_project
+import region_configuration
 
 
 def run_install(workdir):

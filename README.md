@@ -10,16 +10,23 @@ It utilizes stack inheritance to limit code duplication and centralize configura
 - npm
 - python 3
 
+## Install
+- Clone the repo
+- Install locally in [development mode](https://setuptools.pypa.io/en/latest/userguide/development_mode.html) using pip
+```shell
+pip install -e /path/to/repo_root
+```
+
 ## Usage
 ```shell
 $:python -m cdk-stages -h
-usage: cdk-stages [-h] -p PATH [-n NAME] [-c CONFIG]
+usage: python3 -m cdk-stages [options]
 
 optional arguments:
-  -h,        --help          show this help message and exit
-  -p PATH,   --path   PATH   Full path to directory to create project in.
-  -n NAME,   --name   NAME   Name of project to create.
-  -c CONFIG, --config CONFIG (Optional)Full path to config file that defines stages to create.
+  -h, --help            show this help message and exit
+  -p PATH, --path PATH  Full path to directory to create project in.
+  -n NAME, --name NAME  Name of project to create.
+  -c CONF, --conf CONF  (Optional)Path to config that defines stages.
 ```
 
 ## Project Structure

@@ -4,8 +4,8 @@ import shutil
 import subprocess
 import sys
 
-from .stage import Stage
-from .utils import camel_case, create_file
+import stage
+import utils
 
 
 class CdkProject:
@@ -24,7 +24,7 @@ class CdkProject:
         self.regions = []
 
         self.project_name = name
-        self.camel_case_name = camel_case(self.project_name)
+        self.camel_case_name = utils.camel_case(self.project_name)
         self.entrypoint = "cdk.ts"
 
     def setup(self):
@@ -45,7 +45,7 @@ class CdkProject:
         self.entrypoint = self.workdir + "/bin/" + self.project_name + '.ts'
         shutil.copy(template, self.entrypoint)
 
-        create_file("templates/cdk-ts.template",
+        utils.create_file("templates/cdk-ts.template",
                     self.workdir + "/" + self.project_name
         )
 
@@ -64,7 +64,7 @@ class CdkProject:
                 for account in item[ou]:
                     for region in item[ou][account]:
                         self.regions.append(region)
-                        self.stages.append(Stage(ou, account, region, self.workdir))
+                        self.stages.append(stage.Stage(ou, account, region, self.workdir))
 
     def build(self):
         self.setup()

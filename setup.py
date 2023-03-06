@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='cdk-stages',
-    version='0.0.1',
+    version='0.0.2',
     packages=['cdk-stages'],
     url='https://github.com/Alladinsane/cdk-stages',
     license='',
