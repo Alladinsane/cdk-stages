@@ -21,6 +21,8 @@ optional arguments:
   -n NAME,   --name   NAME   Name of project to create.
   -c CONFIG, --config CONFIG (Optional)Full path to config file that defines stages to create.
 ```
+All arguments are optional. A sample AwesomeProject is created in current directory using an example stage configuration 
+if no args are provided.
 
 ## Project Structure
 Projects generated with cdk-stages are created by first executing `cdk init --app language=typescript` and then utilizing 
