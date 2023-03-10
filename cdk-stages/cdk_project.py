@@ -18,8 +18,9 @@ class CdkProject:
             configuration = os.path.join(os.path.abspath(os.path.dirname(__file__)), "config/example.json")
             print("configuration=" + configuration)
 
-        with open(configuration, "r") as f:
-            self.project_stages = json.load(f)
+        print(configuration)
+        with open(configuration, 'r') as f:
+            self.project_stages = f.read()
 
         self.regions = []
 
