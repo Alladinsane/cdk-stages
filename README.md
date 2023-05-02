@@ -1,7 +1,10 @@
 # Cdk-Stages
 python
 ## Summary
-Rapidly deploys a typescript cdk project that implements stages, an environment construct, and regional configurations. 
+Rapidly deploys a typescript cdk project with a directory structured for implementing Stages. It includes a construct for 
+creating Environments, basic structure for regional configurations, and defines some groupings of resource types into 
+CostCenters.
+
 This follows a pattern suitable for managing multi-account deployments for users that already utilize AWS Organizations. 
 It utilizes stack inheritance to limit code duplication and centralize configuration of each stage.
 
@@ -24,19 +27,19 @@ For usage information:
 python -m cdk-stages -h
 ```
 ```shell
-usage: python3 -m cdk-stages [-h] -p PATH [-n NAME] [-c CONFIG]
+usage: python -m cdk-stages [options]
 
-optional arguments:
-  -h,        --help          show this help message and exit
-  -p PATH,   --path   PATH   Full path to directory to create project in.
-  -n NAME,   --name   NAME   Name of project to create.
-  -c CONFIG, --config CONFIG Full path to config file that defines stages to create.
+options:
+  -h, --help            show this help message and exit
+  --sampleapp           Creates sample application.
+  -p PATH, --path PATH  Full path to directory to create project in. Defaults to current working directory.
+  -n NAME, --name NAME  Name of project to create.
+  -c CONF, --conf CONF  Path to config that defines stages to create.
 ```
-All arguments are optional. A sample AwesomeProject is created in current directory using an example stage configuration 
-if no args are provided.
+All arguments are optional. If no configuration is provided, no stages will be generated unless creating the sampleapp.
 
 ## Project Structure
-Projects generated with cdk-stages are created by first executing `cdk init --app language=typescript` and then utilizing 
+Cdk-Stages generates projects by first executing `cdk init --app language=typescript` and then utilizing 
 the templates and directories included to alter the structure. 
 
 The entrypoint, bin/cdk.ts, is rewritten so that it is ready to begin defining stages. The lib directory is renamed to 
@@ -74,7 +77,7 @@ src, and laid out as shown in the example below.
 ```
 
 The exact names and contents of each stage directory and region configurations are generated based on the stages defined 
-in your config. As shown, each directory contains a detailed README.
+in the config, if one was provided. As shown, each directory contains a detailed README.
 
 For detailed explanations of why we use this layout, and how it allows us to use stack inheritance to limit code 
 duplication, see the READMEs in each directory. The best jumping off point is the 
@@ -87,35 +90,18 @@ format:
 ```json
 [
   {
-    "OU": {
-        "Account": [
+    "name": "org_name",
+    "accounts": [
+      {
+        "name": "account_name",
+        "account_id": "1234567890",
+        "regions": [
             "aws-region-code",
             ...
-          ],
-        ...
         ]
+      },
+      ...
     }
-  }
-]
-```
-
-If no config is supplied, an example OU, three example accounts, and 4 sample stages are created for you using the 
-default configuration:
-```json
-[
-    {
-        "example": {
-            "stage": [
-                "us-east-1"
-            ],
-            "dev": [
-                "us-east-1",
-                "us-east-2"
-            ],
-            "prod": [
-                "us-east-1"
-            ]
-        }
   }
 ]
 ```

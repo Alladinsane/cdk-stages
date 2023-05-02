@@ -32,17 +32,16 @@ def main(name, path, conf, demo=False):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(prog='cdk-stages', usage='python3 -m %(prog)s [options]')
-    parser.add_argument('--sampleapp', help='Creates sample application.', action="store_true")
+    parser = argparse.ArgumentParser(prog='cdk-stages', usage='python -m %(prog)s [options]')
+    parser.add_argument('--sampleapp', help='Creates sample application.', action="store_true", required=False)
 
     parser.add_argument('-p', '--path',
-                        help='Full path to directory to create project in.',
-                        default=None)
-    parser.add_argument('-n', '--name', help='Name of project to create.', default='AwesomeProject')
+                        help='Full path to directory to create project in. Defaults to current working directory.',
+                        default=None,
+                        required=False)
+    parser.add_argument('-n', '--name', help='Name of project to create.', default='AwesomeProject', required=False)
     parser.add_argument('-c', '--conf', help='Path to config that defines stages to create.',
-                        default=None)
+                        default=None, required=False)
     args = parser.parse_args()
-
-    demo = False
 
     main(args.name, args.path, args.conf, args.sampleapp)
