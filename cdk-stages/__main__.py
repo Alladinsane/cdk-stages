@@ -32,7 +32,7 @@ def main(name, path, conf, demo=False):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(prog='cdk-stages', usage='python -m %(prog)s [options]')
+    parser = argparse.ArgumentParser(prog='cdk-stages', description=__doc__, usage='python -m %(prog)s [options]')
     parser.add_argument('--sampleapp', help='Creates sample application.', action="store_true", required=False)
 
     parser.add_argument('-p', '--path',
