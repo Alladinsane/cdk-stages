@@ -1,5 +1,5 @@
 import { Tags } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
+import { Construct } from 'constructs';${demo_stack_import}
 
 /**
  * Configuration for the Environment Config
@@ -27,6 +27,7 @@ export class Environment extends Construct {
         Tags.of(this).add('environment', this.name)
 
         // Stacks that make up an environment
+${demo_stack}
     }
     
 }

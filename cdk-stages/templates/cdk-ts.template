@@ -2,12 +2,12 @@
 import { App } from 'aws-cdk-lib';
 
 // Import the classes that define our stages
-// import { ExampleDevUsEast1 } from '../src/stages/example/dev/us-east-1';
+${comment}import { DemoOrgAccount1UsEast1 } from '../src/stages/demo_org/account1/us-east-1';
 
 const app = new App();
 
 
 // Add all the stages (account+region pairs) to which we want to deploy stacks
-// const example = new ExampleDevUsEast1(app, 'example-dev-us-east-1', {})
+${comment}const example = new DemoOrgAccount1UsEast1(app, 'demoorg-account1-us-east-1', {})
 
 app.synth()

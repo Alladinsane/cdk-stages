@@ -1,14 +1,23 @@
-[{
-    "example": {
-        "stage": [
-            "us-east-1"
-        ],
-        "dev": [
-            "us-east-1",
-            "us-east-2"
-        ],
-        "prod": [
-            "us-east-1"
+[
+    {
+        "name": "demo_org",
+        "accounts":
+        [
+            {
+                "name": "account1",
+                "account_id": "1234567890",
+                "regions": [
+                    "us-east-1"
+                ]
+            },
+            {
+                "name": "account2",
+                "account_id": "1234567891",
+                "regions": [
+                    "us-east-1",
+                    "us-east-2"
+                ]
+            }
         ]
     }
-}]
+]

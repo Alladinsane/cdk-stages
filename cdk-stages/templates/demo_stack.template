@@ -1,0 +1,18 @@
+import { Stack, StackProps, Tags } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { SnsTopic } from '../resources/sns_topic';
+
+export interface CommonProps extends StackProps {
+
+}
+
+export class Demo extends Stack {
+  // Resource properties
+  public readonly helloWorldTopic: SnsTopic;
+
+  constructor(scope: Construct, id: string, props: CommonProps) {
+    super(scope, id, props);
+
+    this.helloWorldTopic = new SnsTopic(this, "helloword", {})
+  }
+}

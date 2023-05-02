@@ -9,7 +9,7 @@ export interface ${class_name}Props extends StageProps {
 
 export abstract class ${class_name} extends ${parent_class} {
     // Static properties
-    public static readonly AccountId: string = '123456789'; // Replace with Account Id for ${account}
+    ${account_connector}
 
     // Input properties
 
@@ -21,6 +21,5 @@ export abstract class ${class_name} extends ${parent_class} {
 
         Tags.of(this).add('account', '${account}')
 
-        // Define Environments here
     }
 }

@@ -1,6 +1,10 @@
 import os
+import sys
 
-from . import utils
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+
+from .utils import camel_case,create_file
 
 
 class RegionConfiguration:
@@ -18,19 +22,20 @@ class RegionConfiguration:
         for region in self.regions:
             if not os.path.isfile(self.workdir + "/src/configuration/regions/" + region + ".ts"):
                 print("Creating configuration file for region " + region + "...")
-                utils.create_file("templates/region-config.template",
+                create_file("templates/region-config.template",
                             self.workdir + "/src/configuration/regions/" + region + ".ts",
                             {
-                                "region_name": utils.camel_case(region)
+                                "region_name": camel_case(region)
                             })
-                self.imports.append("import { config as " + utils.camel_case(region) + "Config } from './" + region + "';")
-                self.configs.append("['" + region + "']: " + utils.camel_case(region) + "Config,")
+                self.imports.append("import { config as " + camel_case(region) + "Config } from './" + region + "';")
+
+                self.configs.append("['" + region + "']: " + camel_case(region) + "Config,")
                 print("Done")
                 print(" ")
 
     def create_region_config_index(self):
         print("Creating index file for region configurations...")
-        utils.create_file("templates/region-index.template",
+        create_file("templates/region-index.template",
                     self.workdir + "/src/configuration/regions/index.ts",
                     {
                         "imports": '\n'.join(self.imports),

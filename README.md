@@ -10,16 +10,27 @@ It utilizes stack inheritance to limit code duplication and centralize configura
 - npm
 - python 3
 
-## Usage
+## Installation
+Cdk-Stages is an experimental project, which can be downloaded and run as a module using pip.
+
+Clone the project, and install in *editable* mode.
 ```shell
-$:python -m cdk-stages -h
-usage: cdk-stages [-h] -p PATH [-n NAME] [-c CONFIG]
+pip install -e /path/to/cdk_stages
+```
+
+## Usage
+For usage information:
+```shell
+python -m cdk-stages -h
+```
+```shell
+usage: python3 -m cdk-stages [-h] -p PATH [-n NAME] [-c CONFIG]
 
 optional arguments:
   -h,        --help          show this help message and exit
   -p PATH,   --path   PATH   Full path to directory to create project in.
   -n NAME,   --name   NAME   Name of project to create.
-  -c CONFIG, --config CONFIG (Optional)Full path to config file that defines stages to create.
+  -c CONFIG, --config CONFIG Full path to config file that defines stages to create.
 ```
 All arguments are optional. A sample AwesomeProject is created in current directory using an example stage configuration 
 if no args are provided.

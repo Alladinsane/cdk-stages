@@ -1,6 +1,7 @@
 import { StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { ${parent_class} } from '..';
+import { Environment } from '../../../../constructs/environment'
 
 export interface ${class_name}Props extends StackProps {
     readonly dependencies?: string[];
@@ -12,5 +13,6 @@ export class ${class_name} extends ${parent_class} {
         super(scope, id, {
             ...props, env: { region: '${region}' }
         });
+${demo_env}
     }
 }

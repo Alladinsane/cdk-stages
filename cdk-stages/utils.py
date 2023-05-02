@@ -1,6 +1,5 @@
 import os
 import string
-import sys
 from re import sub
 
 
