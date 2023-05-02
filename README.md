@@ -97,11 +97,9 @@ format:
         "account_id": "1234567890",
         "regions": [
             "aws-region-code",
-            ...
         ]
       },
-      ...
-    }
+    ]
   }
 ]
 ```
